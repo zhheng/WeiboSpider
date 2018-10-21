@@ -19,6 +19,59 @@ This is a sina weibo spider built by scrapy
 
 已经在senior分支的基础上新增了[search分支](https://github.com/nghuyong/WeiboSpider/tree/search)，用于微博关键词搜索
 
+﻿Information 字段描述
+
+| 段域 | 数据类型 | 含义 | 附加说明 |
+|-------------|-------------|------------|---------------|
+| _id | string | 用户id | |
+| crawl_time | int | 爬取时间 | |
+| nickname | string | 昵称 | |
+| gender | string  | 性别 | |
+| province | string | 省份 | |
+| city | string | 城市 | |
+| brief_introduction | string | 简介 | |
+| birthday | string | 生日 | 部分情况下新浪返回星座 |
+| sex_orientation | string | 性取向 | |
+| sentiment | string | 感情状况 | |
+| vip_level | string | 会员等级 | |
+| authentication | string | 认证信息 | | 
+| tweets_num | int | 微博数目 | |
+| follows_num | int | 关注数目 | |
+| fans_num | int | 粉丝数目 | |
+
+﻿Relationships 字段描述
+
+| 段域 | 数据类型 | 含义 | 附加说明 |
+|-------------|-------------|------------|---------------|
+| _id | string | <被关注人uid>-<关注人uid> | ﻿6786512871-2803301701 |
+| crawl_time | int | 爬取时间 | 1540107410 |
+| fan_id | string | 被关注人uid | 6786512871 |
+| followed_id | string  | 关注人uid | 2803301701 |
+
+ Tweets 字段描述
+ 
+| 段域 | 数据类型 | 含义 | 附加说明 |
+|-------------|-------------|------------|---------------|
+| _id | string | '{uid}_{weibo_id}' | |
+| crawl_time | int | 爬取时间 | |
+| weibo_url | string | 微博地址 | |
+| user_id | string | 用户id | |
+| created_at | string | 创建时间 | |
+| like_num | int | 点赞数 | |
+| repost_num | int  | 转发数 | |
+| comment_num | int | 评论数 | |
+| content | string | 正文内容 | |
+
+ Comments 字段描述
+ 
+| 段域 | 数据类型 | 含义 | 附加说明 |
+|-------------|-------------|------------|---------------|
+| _id | string | 评论ID | |
+| crawl_time | int | 爬取时间 | |
+| weibo_url | string | 微博地址 | |
+| comment_user_id | string | 评论用户id | |
+| content | string | 正文内容 | |
+| created_at | string | 创建时间 | |
 
 ## update
 - 2018/10/13 添加[微博搜索分支](https://github.com/nghuyong/WeiboSpider/tree/search)

@@ -10,19 +10,39 @@ from scrapy.utils.project import get_project_settings
 from sina.items import TweetsItem, InformationItem, RelationshipsItem, CommentItem
 from sina.spiders.utils import time_fix
 import time
+from sina.settings import LOCAL_MONGO_HOST, LOCAL_MONGO_PORT, DB_NAME
+import pymongo
 
 
 class WeiboSpider(Spider):
     name = "weibo_spider"
     base_url = "https://weibo.cn"
+    mongo_client = pymongo.MongoClient(LOCAL_MONGO_HOST, LOCAL_MONGO_PORT)
+    info_conn = mongo_client[DB_NAME]["Infofrmation"]
+    relate_conn = mongo_client[DB_NAME]["Relationships"]
+
+    relations = relate_conn.find({})
+    start_uids = set([info['fan_id'] for info in relations] + [info['followed_id'] for info in relations])
 
     def start_requests(self):
-        start_uids = [
-            '2803301701',  # 人民日报
-            '1699432410'  # 新华社
-        ]
-        for uid in start_uids:
-            yield Request(url="https://weibo.cn/%s/info" % uid, callback=self.parse_information)
+        if len(self.start_uids) == 0:
+            self.start_uids = [
+                '2803301701',  # 人民日报
+                '1699432410'  # 新华社
+            ]
+            for uid in self.start_uids:
+                yield Request(url="https://weibo.cn/%s/info" % uid, callback=self.parse_information)
+        else:
+            visited = set([info['_id'] for info in self.info_conn.find({})])
+            self.start_uids = list(self.start_uids - visited)
+
+            while len(self.start_uids) > 0:
+                uid = self.start_uids[0]
+                self.start_uids = self.start_uids[1:]
+                if uid in visited:
+                    continue
+                if self.info_conn.find_one({'_id': uid}) is None:
+                    yield Request(url="https://weibo.cn/%s/info" % uid, callback=self.parse_information)
 
     def parse_information(self, response):
         """ 抓取个人信息 """
@@ -85,8 +105,8 @@ class WeiboSpider(Spider):
         yield information_item
 
         # 获取该用户微博
-        yield Request(url=self.base_url + '/{}/profile?page=1'.format(information_item['_id']), callback=self.parse_tweet,
-                      priority=1)
+        # yield Request(url=self.base_url + '/{}/profile?page=1'.format(information_item['_id']), callback=self.parse_tweet,
+        #               priority=1)
 
         # 获取关注列表
         yield Request(url=self.base_url + '/{}/follow?page=1'.format(information_item['_id']),
@@ -189,6 +209,8 @@ class WeiboSpider(Spider):
             relationships_item["followed_id"] = uid
             relationships_item["_id"] = ID + '-' + uid
             yield relationships_item
+            # 追加新uid
+            self.start_uids.append(uid)
 
     def parse_fans(self, response):
         """
@@ -214,6 +236,8 @@ class WeiboSpider(Spider):
             relationships_item["followed_id"] = ID
             relationships_item["_id"] = uid + '-' + ID
             yield relationships_item
+            # 追加新uid
+            self.start_uids.append(uid)
 
     def parse_comment(self, response):
         # 如果是第1页，一次性获取后面的所有页
