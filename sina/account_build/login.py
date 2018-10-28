@@ -13,7 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from os import listdir
 import sys
 sys.path.append(os.getcwd())
-from sina.settings import LOCAL_MONGO_HOST, LOCAL_MONGO_PORT, DB_NAME
+from sina.settings import USER_NAME, USER_PWD, LOCAL_MONGO_HOST, LOCAL_MONGO_PORT, DB_NAME
 
 TEMPLATES_FOLDER = os.getcwd() + '/sina/account_build/templates/'
 
@@ -192,7 +192,12 @@ if __name__ == '__main__':
     file_path = os.getcwd() + '/sina/account_build/account.txt'
     with open(file_path, 'r') as f:
         lines = f.readlines()
-    mongo_client = pymongo.MongoClient(LOCAL_MONGO_HOST, LOCAL_MONGO_PORT)
+    uri = "mongodb://{username}:{password}@{host}:{port}/{db_name}?authMechanism=MONGODB-CR".format(username=USER_NAME,
+                                                                                                    password=USER_PWD,
+                                                                                                    host=LOCAL_MONGO_HOST,
+                                                                                                    port=LOCAL_MONGO_PORT,
+                                                                                                    db_name=DB_NAME)
+    mongo_client = pymongo.MongoClient(uri)
     collection = mongo_client[DB_NAME]["account"]
     for line in lines:
         line = line.strip()

@@ -10,14 +10,19 @@ from scrapy.utils.project import get_project_settings
 from sina.items import TweetsItem, InformationItem, RelationshipsItem, CommentItem
 from sina.spiders.utils import time_fix
 import time
-from sina.settings import LOCAL_MONGO_HOST, LOCAL_MONGO_PORT, DB_NAME
+from sina.settings import USER_PWD, USER_NAME, LOCAL_MONGO_HOST, LOCAL_MONGO_PORT, DB_NAME
 import pymongo
 
 
 class WeiboSpider(Spider):
     name = "weibo_spider"
     base_url = "https://weibo.cn"
-    mongo_client = pymongo.MongoClient(LOCAL_MONGO_HOST, LOCAL_MONGO_PORT)
+    uri = "mongodb://{username}:{password}@{host}:{port}/{db_name}?authMechanism=MONGODB-CR".format(username=USER_NAME,
+                                                                                                    password=USER_PWD,
+                                                                                                    host=LOCAL_MONGO_HOST,
+                                                                                                    port=LOCAL_MONGO_PORT,
+                                                                                                    db_name=DB_NAME)
+    mongo_client = pymongo.MongoClient(uri)
     info_conn = mongo_client[DB_NAME]["Infofrmation"]
     relate_conn = mongo_client[DB_NAME]["Relationships"]
 

@@ -2,12 +2,19 @@
 import pymongo
 from pymongo.errors import DuplicateKeyError
 from sina.items import RelationshipsItem, TweetsItem, InformationItem, CommentItem
-from sina.settings import LOCAL_MONGO_HOST, LOCAL_MONGO_PORT, DB_NAME
+from sina.settings import USER_PWD, USER_NAME, LOCAL_MONGO_HOST, LOCAL_MONGO_PORT, DB_NAME
 
 
 class MongoDBPipeline(object):
     def __init__(self):
-        client = pymongo.MongoClient(LOCAL_MONGO_HOST, LOCAL_MONGO_PORT)
+
+        uri = "mongodb://{username}:{password}@{host}:{port}/{db_name}?authMechanism=MONGODB-CR".format(
+            username=USER_NAME,
+            password=USER_PWD,
+            host=LOCAL_MONGO_HOST,
+            port=LOCAL_MONGO_PORT,
+            db_name=DB_NAME)
+        client = pymongo.MongoClient(uri)
         db = client[DB_NAME]
         self.Information = db["Information"]
         self.Tweets = db["Tweets"]

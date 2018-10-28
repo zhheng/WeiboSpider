@@ -107,7 +107,7 @@ pip install -r requirements.txt
 ### 构建账号池
 
 ```bash
-python sina/account_build/login.py
+python3 sina/account_build/login.py
 ```
 运行截图:
 

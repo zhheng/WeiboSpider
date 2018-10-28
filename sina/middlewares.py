@@ -2,7 +2,7 @@
 import random
 
 import pymongo
-from sina.settings import LOCAL_MONGO_PORT, LOCAL_MONGO_HOST, DB_NAME
+from sina.settings import USER_NAME, USER_PWD, LOCAL_MONGO_PORT, LOCAL_MONGO_HOST, DB_NAME
 
 
 class CookieMiddleware(object):
@@ -11,7 +11,13 @@ class CookieMiddleware(object):
     """
 
     def __init__(self):
-        client = pymongo.MongoClient(LOCAL_MONGO_HOST, LOCAL_MONGO_PORT)
+        uri = "mongodb://{username}:{password}@{host}:{port}/{db_name}?authMechanism=MONGODB-CR".format(
+            username=USER_NAME,
+            password=USER_PWD,
+            host=LOCAL_MONGO_HOST,
+            port=LOCAL_MONGO_PORT,
+            db_name=DB_NAME)
+        client = pymongo.MongoClient(uri)
         self.account_collection = client[DB_NAME]['account']
 
     def process_request(self, request, spider):
@@ -32,7 +38,13 @@ class RedirectMiddleware(object):
     """
 
     def __init__(self):
-        client = pymongo.MongoClient(LOCAL_MONGO_HOST, LOCAL_MONGO_PORT)
+        uri = "mongodb://{username}:{password}@{host}:{port}/{db_name}?authMechanism=MONGODB-CR".format(
+            username=USER_NAME,
+            password=USER_PWD,
+            host=LOCAL_MONGO_HOST,
+            port=LOCAL_MONGO_PORT,
+            db_name=DB_NAME)
+        client = pymongo.MongoClient(uri)
         self.account_collection = client[DB_NAME]['account']
 
     def process_response(self, request, response, spider):
