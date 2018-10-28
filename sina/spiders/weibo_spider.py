@@ -18,7 +18,7 @@ import pymongo
 class WeiboSpider(Spider):
     name = "weibo_spider"
     base_url = "https://weibo.cn"
-    uri = "F:{password}@{host}:{port}/{db_name}?authMechanism=MONGODB-CR".format(
+    uri = "mongodb://{password}@{host}:{port}/{db_name}?authMechanism=MONGODB-CR".format(
         username=urllib.parse.quote_plus(USER_NAME),
         password=urllib.parse.quote_plus(USER_PWD),
         host=LOCAL_MONGO_HOST,
