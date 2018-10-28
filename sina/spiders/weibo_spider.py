@@ -2,6 +2,7 @@
 # encoding: utf-8
 import re
 from lxml import etree
+import urllib.parse
 from scrapy import Spider
 from scrapy.crawler import CrawlerProcess
 from scrapy.selector import Selector
@@ -17,11 +18,12 @@ import pymongo
 class WeiboSpider(Spider):
     name = "weibo_spider"
     base_url = "https://weibo.cn"
-    uri = "mongodb://{username}:{password}@{host}:{port}/{db_name}?authMechanism=MONGODB-CR".format(username=USER_NAME,
-                                                                                                    password=USER_PWD,
-                                                                                                    host=LOCAL_MONGO_HOST,
-                                                                                                    port=LOCAL_MONGO_PORT,
-                                                                                                    db_name=DB_NAME)
+    uri = "F:{password}@{host}:{port}/{db_name}?authMechanism=MONGODB-CR".format(
+        username=urllib.parse.quote_plus(USER_NAME),
+        password=urllib.parse.quote_plus(USER_PWD),
+        host=LOCAL_MONGO_HOST,
+        port=LOCAL_MONGO_PORT,
+        db_name=DB_NAME)
     mongo_client = pymongo.MongoClient(uri)
     info_conn = mongo_client[DB_NAME]["Infofrmation"]
     relate_conn = mongo_client[DB_NAME]["Relationships"]

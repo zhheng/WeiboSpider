@@ -2,6 +2,7 @@ import os
 import time
 from io import BytesIO
 import pymongo
+import urllib.parse
 from PIL import Image
 from pymongo.errors import DuplicateKeyError
 from selenium import webdriver
@@ -192,11 +193,12 @@ if __name__ == '__main__':
     file_path = os.getcwd() + '/sina/account_build/account.txt'
     with open(file_path, 'r') as f:
         lines = f.readlines()
-    uri = "mongodb://{username}:{password}@{host}:{port}/{db_name}?authMechanism=MONGODB-CR".format(username=USER_NAME,
-                                                                                                    password=USER_PWD,
-                                                                                                    host=LOCAL_MONGO_HOST,
-                                                                                                    port=LOCAL_MONGO_PORT,
-                                                                                                    db_name=DB_NAME)
+    uri = "mongodb://{username}:{password}@{host}:{port}/{db_name}?authMechanism=MONGODB-CR".format(
+        username=urllib.parse.quote_plus(USER_NAME),
+        password=urllib.parse.quote_plus(USER_PWD),
+        host=LOCAL_MONGO_HOST,
+        port=LOCAL_MONGO_PORT,
+        db_name=DB_NAME)
     mongo_client = pymongo.MongoClient(uri)
     collection = mongo_client[DB_NAME]["account"]
     for line in lines:

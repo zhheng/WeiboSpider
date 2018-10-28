@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import pymongo
+import urllib.parse
 from pymongo.errors import DuplicateKeyError
 from sina.items import RelationshipsItem, TweetsItem, InformationItem, CommentItem
 from sina.settings import USER_PWD, USER_NAME, LOCAL_MONGO_HOST, LOCAL_MONGO_PORT, DB_NAME
@@ -9,8 +10,8 @@ class MongoDBPipeline(object):
     def __init__(self):
 
         uri = "mongodb://{username}:{password}@{host}:{port}/{db_name}?authMechanism=MONGODB-CR".format(
-            username=USER_NAME,
-            password=USER_PWD,
+            username=urllib.parse.quote_plus(USER_NAME),
+            password=urllib.parse.quote_plus(USER_PWD),
             host=LOCAL_MONGO_HOST,
             port=LOCAL_MONGO_PORT,
             db_name=DB_NAME)

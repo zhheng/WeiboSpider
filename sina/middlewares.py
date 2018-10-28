@@ -1,6 +1,6 @@
 # encoding: utf-8
 import random
-
+import urllib.parse
 import pymongo
 from sina.settings import USER_NAME, USER_PWD, LOCAL_MONGO_PORT, LOCAL_MONGO_HOST, DB_NAME
 
@@ -12,8 +12,8 @@ class CookieMiddleware(object):
 
     def __init__(self):
         uri = "mongodb://{username}:{password}@{host}:{port}/{db_name}?authMechanism=MONGODB-CR".format(
-            username=USER_NAME,
-            password=USER_PWD,
+            username=urllib.parse.quote_plus(USER_NAME),
+            password=urllib.parse.quote_plus(USER_PWD),
             host=LOCAL_MONGO_HOST,
             port=LOCAL_MONGO_PORT,
             db_name=DB_NAME)
@@ -39,8 +39,8 @@ class RedirectMiddleware(object):
 
     def __init__(self):
         uri = "mongodb://{username}:{password}@{host}:{port}/{db_name}?authMechanism=MONGODB-CR".format(
-            username=USER_NAME,
-            password=USER_PWD,
+            username=urllib.parse.quote_plus(USER_NAME),
+            password=urllib.parse.quote_plus(USER_PWD),
             host=LOCAL_MONGO_HOST,
             port=LOCAL_MONGO_PORT,
             db_name=DB_NAME)
